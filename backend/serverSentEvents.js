@@ -17,6 +17,7 @@ function formatDate() {
 }
 
 const server = http.createServer((req, res) => {
+  // Handle SSE endpoint
   if (req.url === '/events') {
     res.writeHead(200, {
       'Content-Type': 'text/event-stream',
@@ -27,9 +28,9 @@ const server = http.createServer((req, res) => {
 
     res.write(':SSE Stream Open\n\n');
 
+    // Send data every 2 seconds
     const interval = setInterval(() => {
       const dateData = formatDate();
-      // Send multiple formats in the SSE stream
       res.write(`data: ${JSON.stringify({
         timestamp: Date.now(),
         formatted: dateData,
@@ -37,16 +38,18 @@ const server = http.createServer((req, res) => {
       })}\n\n`);
     }, 2000);
 
+    // Clean up on client disconnect
     req.on('close', () => {
       clearInterval(interval);
       console.log('Client disconnected');
     });
   } else {
+    // Default endpoint
     res.writeHead(200);
-    res.end("Regular HTTP endpoint");
+    res.end('Regular HTTP endpoint');
   }
 });
 
 server.listen(3000, () => {
-  console.log("SSE Server running on port 3000");
+  console.log('SSE Server running on port 3000');
 });

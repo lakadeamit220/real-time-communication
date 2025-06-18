@@ -1,16 +1,27 @@
-const WebSocket = require("ws");
+const WebSocket = require('ws');
 
+// Create a WebSocket server on port 3000
 const server = new WebSocket.Server({ port: 3000 });
 
-server.on("connection", (socket) => {
-  console.log("Client Connected!!");
+// Handle new client connections
+server.on('connection', (socket) => {
+  console.log('Client connected');
 
-  socket.send('Web Socket Demo!!');
+  // Send a welcome message to the client
+  socket.send('Welcome to the WebSocket server!');
 
-  socket.on("message", (message) => {
-    console.log(message);
-    socket.send("Hello from Server!!")
-  })
+  // Handle incoming messages
+  socket.on('message', (message) => {
+    const received = message.toString(); // Convert buffer to string
+    console.log(`Received: ${received}`);
+    // Echo back the message with a prefix
+    socket.send(`Server echo: ${received}`);
+  });
+
+  // Handle client disconnection
+  socket.on('close', () => {
+    console.log('Client disconnected');
+  });
 });
 
 console.log('WebSocket server started at ws://localhost:3000');

@@ -7,7 +7,7 @@ const server = http.createServer((req, res) => {
         "content-type": "application/json",
       })
       res.end(JSON.stringify({
-        message: `Hello at ${new Date().toISOString()}`
+        message: `Hello: ${new Date().toISOString()}`
       }))
     }, 3000)
   } else {
@@ -16,7 +16,7 @@ const server = http.createServer((req, res) => {
   }
 })
 
-server.listen(3000,()=>{
+server.listen(3000, () => {
   console.log("Server is running on port 3000");
-  
+
 })

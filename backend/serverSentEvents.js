@@ -5,7 +5,7 @@ function formatDate() {
   const now = new Date();
   return {
     year: now.getFullYear(),
-    month: now.getMonth() + 1, // Months are 0-indexed
+    month: now.getMonth() + 1,
     day: now.getDate(),
     hours: now.getHours(),
     minutes: now.getMinutes(),
@@ -15,6 +15,8 @@ function formatDate() {
     localeString: now.toLocaleString()
   };
 }
+
+let eventId = 0; // Track event IDs
 
 const server = http.createServer((req, res) => {
   // Handle SSE endpoint
@@ -28,9 +30,11 @@ const server = http.createServer((req, res) => {
 
     res.write(':SSE Stream Open\n\n');
 
-    // Send data every 2 seconds
+    // Send events every 2 seconds
     const interval = setInterval(() => {
       const dateData = formatDate();
+      res.write(`id: ${++eventId}\n`);
+      res.write(`retry: 5000\n`); // Retry connection after 5 seconds if disconnected
       res.write(`data: ${JSON.stringify({
         timestamp: Date.now(),
         formatted: dateData,
@@ -45,11 +49,11 @@ const server = http.createServer((req, res) => {
     });
   } else {
     // Default endpoint
-    res.writeHead(200);
-    res.end('Regular HTTP endpoint');
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('SSE server is up and running!!');
   }
 });
 
-server.listen(3000, () => {
-  console.log('SSE Server running on port 3000');
+server.listen(3002, () => {
+  console.log('SSE server running on http://localhost:3002');
 });
